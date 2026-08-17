@@ -1,6 +1,7 @@
+
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&height=220&section=header&text=SHREYA%20KUMARI&fontSize=55&fontColor=ffffff&animation=fadeIn&fontAlignY=38&desc=Frontend%20Developer%20%7C%20Creative%20Builder&descAlignY=58&descSize=18" width="100%"/>
+<img src="./assets/hero.svg" width="100%" alt="Shreya Kumari - Frontend Developer">
 
 </div>
 
