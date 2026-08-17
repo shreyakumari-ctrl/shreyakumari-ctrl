@@ -42,21 +42,15 @@ Building modern digital experiences with React, JavaScript & AI.
 
 <div align="center">
 
-# 📊 GitHub Analytics
+# 📊 GITHUB ANALYTICS
 
-### A glimpse into my coding journey
+### My coding activity, visualized.
 
 <br>
 
-<img
-  src="https://github-readme-stats.vercel.app/api?username=shreyakumari-ctrl&show_icons=true&hide_border=true&bg_color=0d0a18&title_color=c084fc&text_color=e9d5ff&icon_color=8b5cf6&ring_color=a855f7"
-  width="48%"
-/>
+<img src="https://github-readme-stats.vercel.app/api?username=shreyakumari-ctrl&show_icons=true&hide_border=true&bg_color=0d0a18&title_color=c084fc&text_color=e9d5ff&icon_color=8b5cf6" width="49%" alt="GitHub Stats"/>
 
-<img
-  src="https://github-readme-stats.vercel.app/api/top-langs/?username=shreyakumari-ctrl&layout=compact&hide_border=true&bg_color=0d0a18&title_color=c084fc&text_color=e9d5ff"
-  width="48%"
-/>
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=shreyakumari-ctrl&layout=compact&hide_border=true&bg_color=0d0a18&title_color=c084fc&text_color=e9d5ff" width="49%" alt="Top Languages"/>
 
 </div>
 
@@ -64,9 +58,6 @@ Building modern digital experiences with React, JavaScript & AI.
 
 <div align="center">
 
-<img
-  src="https://github-readme-streak-stats.herokuapp.com/?user=shreyakumari-ctrl&theme=midnight-purple&hide_border=true&background=0d0a18&ring=a855f7&fire=c084fc&currStreakLabel=c084fc"
-  width="70%"
-/>
+<img src="https://github-readme-streak-stats-eight.vercel.app/?user=shreyakumari-ctrl&theme=midnight-purple&hide_border=true&background=0d0a18&ring=a855f7&fire=c084fc&currStreakLabel=c084fc" width="75%" alt="GitHub Streak"/>
 
 </div>
