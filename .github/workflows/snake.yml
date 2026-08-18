@@ -13,15 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
       - name: Generate snake animation
-        uses: Platane/snk@v3
+        uses: Platane/snk/svg-only@v3
         with:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
             profile/github-contribution-grid-snake.svg
             profile/github-contribution-grid-snake-dark.svg?palette=github-dark
 
-      - name: Push snake animation
+      - name: Commit snake animation
         uses: EndBug/add-and-commit@v9
         with:
           message: "Generate contribution snake"
