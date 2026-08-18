@@ -69,21 +69,14 @@ jobs:
           with urllib.request.urlopen(request) as response:
               data = json.load(response)
 
-          # Debug output
-          print("========== GITHUB API RESPONSE ==========")
-          print(json.dumps(data, indent=2))
-          print("==========================================")
-
           if "errors" in data:
-              print("GitHub API returned errors:")
               print(json.dumps(data["errors"], indent=2))
               raise SystemExit(1)
 
           user = data.get("data", {}).get("user")
 
           if not user:
-              print("Could not find GitHub user.")
-              raise SystemExit(1)
+              raise SystemExit("GitHub user not found.")
 
           repos = user.get("pinnedItems", {}).get("nodes", [])
 
@@ -108,8 +101,6 @@ jobs:
           with open("profile/pinned-projects.json") as file:
               repos = json.load(file)
 
-          print(f"Generating cards for {len(repos)} repositories.")
-
           width = 1200
           card_width = 520
           card_height = 180
@@ -118,10 +109,7 @@ jobs:
           left = 60
           top = 140
 
-          if len(repos) == 0:
-              rows = 1
-          else:
-              rows = (len(repos) + 1) // 2
+          rows = max(1, (len(repos) + 1) // 2)
 
           height = top + rows * card_height + (rows - 1) * gap_y + 70
 
@@ -132,47 +120,72 @@ jobs:
           <defs>
 
             <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#07000f"/>
-              <stop offset="50%" stop-color="#120a2b"/>
+              <stop offset="0%" stop-color="#05020d"/>
+              <stop offset="45%" stop-color="#130a29"/>
               <stop offset="100%" stop-color="#03030a"/>
             </linearGradient>
 
             <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#24153f"/>
-              <stop offset="100%" stop-color="#0d0b19"/>
+              <stop offset="0%" stop-color="#211337"/>
+              <stop offset="55%" stop-color="#100b1f"/>
+              <stop offset="100%" stop-color="#080711"/>
             </linearGradient>
 
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="18"/>
+            <linearGradient id="accent" x1="0" x2="1">
+              <stop offset="0%" stop-color="#a855f7"/>
+              <stop offset="50%" stop-color="#8b5cf6"/>
+              <stop offset="100%" stop-color="#6366f1"/>
+            </linearGradient>
+
+            <filter id="blur">
+              <feGaussianBlur stdDeviation="25"/>
+            </filter>
+
+            <filter id="softGlow">
+              <feGaussianBlur stdDeviation="8"/>
             </filter>
 
           </defs>
+
+          <!-- BACKGROUND -->
 
           <rect width="{width}"
                 height="{height}"
                 rx="32"
                 fill="url(#bg)"/>
 
-          <circle cx="120"
+          <!-- AMBIENT LIGHT -->
+
+          <circle cx="100"
                   cy="80"
-                  r="150"
+                  r="180"
                   fill="#8b5cf6"
-                  opacity=".15"
-                  filter="url(#glow)">
+                  opacity=".14"
+                  filter="url(#blur)">
 
             <animate attributeName="cx"
-                     values="120;220;120"
-                     dur="7s"
+                     values="100;240;100"
+                     dur="8s"
+                     repeatCount="indefinite"/>
+
+            <animate attributeName="cy"
+                     values="80;150;80"
+                     dur="9s"
                      repeatCount="indefinite"/>
 
           </circle>
 
           <circle cx="1080"
                   cy="{height - 80}"
-                  r="170"
+                  r="190"
                   fill="#6366f1"
-                  opacity=".12"
-                  filter="url(#glow)">
+                  opacity=".13"
+                  filter="url(#blur)">
+
+            <animate attributeName="cx"
+                     values="1080;980;1080"
+                     dur="9s"
+                     repeatCount="indefinite"/>
 
             <animate attributeName="cy"
                      values="{height - 80};{height - 150};{height - 80}"
@@ -180,6 +193,18 @@ jobs:
                      repeatCount="indefinite"/>
 
           </circle>
+
+          <!-- TOP GRID -->
+
+          <path d="M0 125 H1200"
+                stroke="#a855f7"
+                stroke-opacity=".08"/>
+
+          <path d="M0 130 H1200"
+                stroke="#a855f7"
+                stroke-opacity=".03"/>
+
+          <!-- HEADING -->
 
           <text x="600"
                 y="62"
@@ -197,14 +222,15 @@ jobs:
                 font-family="Arial, Helvetica, sans-serif"
                 font-size="15"
                 fill="#b8a8d9">
-            My pinned repositories
+            Selected from my pinned repositories
           </text>
+
+          <!-- PROJECTS -->
           '''
 
           if len(repos) == 0:
 
               svg += '''
-
               <text x="600"
                     y="220"
                     text-anchor="middle"
@@ -213,7 +239,6 @@ jobs:
                     fill="#b8a8d9">
                 No pinned repositories found.
               </text>
-
               '''
 
           for i, repo in enumerate(repos):
@@ -250,7 +275,23 @@ jobs:
 
               svg += f'''
 
+              <!-- PROJECT CARD -->
+
               <g>
+
+                <!-- glow -->
+
+                <rect x="{x + 2}"
+                      y="{y + 3}"
+                      width="{card_width - 4}"
+                      height="{card_height - 4}"
+                      rx="24"
+                      fill="none"
+                      stroke="#a855f7"
+                      stroke-opacity=".12"
+                      filter="url(#softGlow)"/>
+
+                <!-- card -->
 
                 <rect x="{x}"
                       y="{y}"
@@ -258,41 +299,57 @@ jobs:
                       height="{card_height}"
                       rx="24"
                       fill="url(#card)"
-                      stroke="#a855f7"
+                      stroke="url(#accent)"
                       stroke-opacity=".45"/>
 
-                <rect x="{x}"
-                      y="{y}"
-                      width="{card_width}"
-                      height="{card_height}"
-                      rx="24"
+                <!-- inner border -->
+
+                <rect x="{x + 1}"
+                      y="{y + 1}"
+                      width="{card_width - 2}"
+                      height="{card_height - 2}"
+                      rx="23"
                       fill="none"
-                      stroke="#c084fc"
-                      stroke-opacity=".12"
-                      stroke-width="6"/>
+                      stroke="#ffffff"
+                      stroke-opacity=".05"/>
+
+                <!-- icon -->
 
                 <circle cx="{x + 48}"
                         cy="{y + 50}"
-                        r="27"
-                        fill="#a855f7"
-                        opacity=".18"/>
+                        r="28"
+                        fill="#8b5cf6"
+                        opacity=".14"/>
+
+                <circle cx="{x + 48}"
+                        cy="{y + 50}"
+                        r="20"
+                        fill="none"
+                        stroke="#c084fc"
+                        stroke-opacity=".35"/>
 
                 <text x="{x + 48}"
-                      y="{y + 59}"
+                      y="{y + 57}"
                       text-anchor="middle"
-                      font-size="22"
+                      font-family="Arial, Helvetica, sans-serif"
+                      font-size="18"
+                      font-weight="700"
                       fill="#ffffff">
-                  ◈
+                  &lt;/&gt;
                 </text>
+
+                <!-- project name -->
 
                 <text x="{x + 90}"
                       y="{y + 48}"
                       font-family="Arial, Helvetica, sans-serif"
-                      font-size="22"
+                      font-size="21"
                       font-weight="700"
                       fill="#ffffff">
                   {name}
                 </text>
+
+                <!-- description -->
 
                 <text x="{x + 90}"
                       y="{y + 78}"
@@ -302,27 +359,55 @@ jobs:
                   {description}
                 </text>
 
-                <text x="{x + 90}"
-                      y="{y + 112}"
+                <!-- language -->
+
+                <rect x="{x + 90}"
+                      y="{y + 96}"
+                      width="105"
+                      height="25"
+                      rx="12"
+                      fill="#8b5cf6"
+                      opacity=".10"/>
+
+                <text x="{x + 103}"
+                      y="{y + 113}"
                       font-family="monospace"
-                      font-size="12"
+                      font-size="11"
                       fill="#c084fc">
                   {language_name}
                 </text>
 
+                <!-- stats -->
+
                 <text x="{x + 90}"
-                      y="{y + 145}"
+                      y="{y + 148}"
                       font-family="monospace"
                       font-size="12"
                       fill="#818cf8">
-                  ★ {stars}     ⑂ {forks}
+                  ★ {stars}    ⑂ {forks}
                 </text>
+
+                <!-- status -->
+
+                <circle cx="{x + card_width - 28}"
+                        cy="{y + 28}"
+                        r="4"
+                        fill="#a855f7">
+
+                  <animate attributeName="opacity"
+                           values=".3;1;.3"
+                           dur="2s"
+                           repeatCount="indefinite"/>
+
+                </circle>
 
               </g>
 
               '''
 
           svg += f'''
+
+          <!-- BORDER -->
 
           <rect x="2"
                 y="2"
