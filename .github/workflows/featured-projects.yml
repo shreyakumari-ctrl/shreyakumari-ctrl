@@ -51,7 +51,9 @@ jobs:
 
           payload = json.dumps({
               "query": query,
-              "variables": {"login": username}
+              "variables": {
+                  "login": username
+              }
           }).encode()
 
           request = urllib.request.Request(
@@ -59,21 +61,42 @@ jobs:
               data=payload,
               headers={
                   "Authorization": f"Bearer {token}",
-                  "Content-Type": "application/json"
+                  "Content-Type": "application/json",
+                  "User-Agent": "github-actions"
               }
           )
 
           with urllib.request.urlopen(request) as response:
               data = json.load(response)
 
-          repos = data["data"]["user"]["pinnedItems"]["nodes"]
+          # Debug output
+          print("========== GITHUB API RESPONSE ==========")
+          print(json.dumps(data, indent=2))
+          print("==========================================")
+
+          if "errors" in data:
+              print("GitHub API returned errors:")
+              print(json.dumps(data["errors"], indent=2))
+              raise SystemExit(1)
+
+          user = data.get("data", {}).get("user")
+
+          if not user:
+              print("Could not find GitHub user.")
+              raise SystemExit(1)
+
+          repos = user.get("pinnedItems", {}).get("nodes", [])
+
+          print(f"Found {len(repos)} pinned repositories.")
+
+          for repo in repos:
+              print("Pinned:", repo.get("name"))
 
           os.makedirs("profile", exist_ok=True)
 
           with open("profile/pinned-projects.json", "w") as file:
               json.dump(repos, file, indent=2)
 
-          print(f"Found {len(repos)} pinned repositories")
           PY
 
       - name: Generate Featured Projects SVG
@@ -85,6 +108,8 @@ jobs:
           with open("profile/pinned-projects.json") as file:
               repos = json.load(file)
 
+          print(f"Generating cards for {len(repos)} repositories.")
+
           width = 1200
           card_width = 520
           card_height = 180
@@ -93,10 +118,16 @@ jobs:
           left = 60
           top = 140
 
-          rows = max(1, (len(repos) + 1) // 2)
+          if len(repos) == 0:
+              rows = 1
+          else:
+              rows = (len(repos) + 1) // 2
+
           height = top + rows * card_height + (rows - 1) * gap_y + 70
 
-          svg = f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+          svg = f'''<svg width="{width}" height="{height}"
+          viewBox="0 0 {width} {height}"
+          xmlns="http://www.w3.org/2000/svg">
 
           <defs>
 
@@ -111,40 +142,47 @@ jobs:
               <stop offset="100%" stop-color="#0d0b19"/>
             </linearGradient>
 
-            <linearGradient id="text" x1="0" x2="1">
-              <stop offset="0%" stop-color="#c084fc"/>
-              <stop offset="100%" stop-color="#818cf8"/>
-            </linearGradient>
-
             <filter id="glow">
               <feGaussianBlur stdDeviation="18"/>
             </filter>
 
           </defs>
 
-          <rect width="{width}" height="{height}" rx="32" fill="url(#bg)"/>
+          <rect width="{width}"
+                height="{height}"
+                rx="32"
+                fill="url(#bg)"/>
 
-          <circle cx="120" cy="80" r="150"
+          <circle cx="120"
+                  cy="80"
+                  r="150"
                   fill="#8b5cf6"
                   opacity=".15"
                   filter="url(#glow)">
+
             <animate attributeName="cx"
                      values="120;220;120"
                      dur="7s"
                      repeatCount="indefinite"/>
+
           </circle>
 
-          <circle cx="1080" cy="{height - 80}" r="170"
+          <circle cx="1080"
+                  cy="{height - 80}"
+                  r="170"
                   fill="#6366f1"
                   opacity=".12"
                   filter="url(#glow)">
+
             <animate attributeName="cy"
                      values="{height - 80};{height - 150};{height - 80}"
                      dur="8s"
                      repeatCount="indefinite"/>
+
           </circle>
 
-          <text x="600" y="62"
+          <text x="600"
+                y="62"
                 text-anchor="middle"
                 font-family="Arial, Helvetica, sans-serif"
                 font-size="38"
@@ -153,7 +191,8 @@ jobs:
             FEATURED WORK
           </text>
 
-          <text x="600" y="95"
+          <text x="600"
+                y="95"
                 text-anchor="middle"
                 font-family="Arial, Helvetica, sans-serif"
                 font-size="15"
@@ -161,6 +200,21 @@ jobs:
             My pinned repositories
           </text>
           '''
+
+          if len(repos) == 0:
+
+              svg += '''
+
+              <text x="600"
+                    y="220"
+                    text-anchor="middle"
+                    font-family="Arial, Helvetica, sans-serif"
+                    font-size="18"
+                    fill="#b8a8d9">
+                No pinned repositories found.
+              </text>
+
+              '''
 
           for i, repo in enumerate(repos):
 
@@ -170,16 +224,26 @@ jobs:
               x = left + col * (card_width + gap_x)
               y = top + row * (card_height + gap_y)
 
-              name = html.escape(repo.get("name") or "Repository")
-              description = html.escape(
-                  repo.get("description") or "A project built with curiosity and code."
+              name = html.escape(
+                  repo.get("name") or "Repository"
               )
 
-              if len(description) > 55:
-                  description = description[:52] + "..."
+              description = html.escape(
+                  repo.get("description")
+                  or "A project built with curiosity and code."
+              )
+
+              if len(description) > 58:
+                  description = description[:55] + "..."
 
               language = repo.get("primaryLanguage")
-              language_name = html.escape(language["name"]) if language else "Project"
+
+              if language:
+                  language_name = html.escape(
+                      language.get("name") or "Project"
+                  )
+              else:
+                  language_name = "Project"
 
               stars = repo.get("stargazerCount", 0)
               forks = repo.get("forkCount", 0)
@@ -204,7 +268,7 @@ jobs:
                       rx="24"
                       fill="none"
                       stroke="#c084fc"
-                      stroke-opacity=".10"
+                      stroke-opacity=".12"
                       stroke-width="6"/>
 
                 <circle cx="{x + 48}"
@@ -218,7 +282,7 @@ jobs:
                       text-anchor="middle"
                       font-size="22"
                       fill="#ffffff">
-                    ◈
+                  ◈
                 </text>
 
                 <text x="{x + 90}"
@@ -227,7 +291,7 @@ jobs:
                       font-size="22"
                       font-weight="700"
                       fill="#ffffff">
-                    {name}
+                  {name}
                 </text>
 
                 <text x="{x + 90}"
@@ -235,7 +299,7 @@ jobs:
                       font-family="Arial, Helvetica, sans-serif"
                       font-size="13"
                       fill="#aaa0c5">
-                    {description}
+                  {description}
                 </text>
 
                 <text x="{x + 90}"
@@ -243,7 +307,7 @@ jobs:
                       font-family="monospace"
                       font-size="12"
                       fill="#c084fc">
-                    {language_name}
+                  {language_name}
                 </text>
 
                 <text x="{x + 90}"
@@ -251,10 +315,11 @@ jobs:
                       font-family="monospace"
                       font-size="12"
                       fill="#818cf8">
-                    ★ {stars}     ⑂ {forks}
+                  ★ {stars}     ⑂ {forks}
                 </text>
 
               </g>
+
               '''
 
           svg += f'''
@@ -271,10 +336,14 @@ jobs:
           </svg>
           '''
 
-          with open("profile/featured-projects.svg", "w") as file:
+          with open(
+              "profile/featured-projects.svg",
+              "w"
+          ) as file:
               file.write(svg)
 
-          print("Featured projects SVG generated.")
+          print("Featured projects SVG generated successfully.")
+
           PY
 
       - name: Commit generated files
