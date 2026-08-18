@@ -1,8 +1,4 @@
-<div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:00ff88,50:00c853,100:001a0d&height=180&section=header&animation=twinkling" width="100%"/>
-
-</div>
 
 <div align="center">
 
