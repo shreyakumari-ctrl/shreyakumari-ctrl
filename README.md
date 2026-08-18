@@ -23,7 +23,7 @@ Building modern digital experiences with React, JavaScript & AI.
 
 <div align="center">
 
-<img src="./assets/projects.svg"
+<img src="./profile/featured-projects.svg"
      width="100%"
      alt="Shreya's Featured Projects">
 
