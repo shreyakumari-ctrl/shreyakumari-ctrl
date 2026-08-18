@@ -22,8 +22,7 @@ jobs:
           github_user_name: ${{ github.repository_owner }}
           outputs: |
             profile/github-contribution-grid-snake.svg
-            profile/github-contribution-grid-snake-dark.svg?palette=github-dark
-
+            profile/github-contribution-grid-snake-dark.svg?palette=github-dark&color_snake=a855f7&color_empty=161022&color_start=6366f1&color_mid=8b5cf6&color_end=c084fc
       - name: Commit snake animation
         uses: EndBug/add-and-commit@v9
         with:
