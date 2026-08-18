@@ -132,3 +132,73 @@ in public.
 
 </div>
 
+<br><br>
+
+<div align="center">
+
+# 🧬 TECH ARSENAL
+
+### Technologies I use to build things.
+
+<br>
+
+<table>
+<tr>
+
+<td align="center" width="25%">
+
+### ⚛️ FRONTEND
+
+HTML  
+CSS  
+JavaScript  
+React  
+Vite  
+Tailwind CSS
+
+</td>
+
+<td align="center" width="25%">
+
+### 🧠 AI / ML
+
+Python  
+OpenCV  
+MediaPipe  
+AI  
+Computer Vision
+
+</td>
+
+<td align="center" width="25%">
+
+### ⚙️ BACKEND
+
+Node.js  
+Express.js  
+MySQL  
+REST APIs  
+Multer
+
+</td>
+
+<td align="center" width="25%">
+
+### 🛠️ TOOLS
+
+Git  
+GitHub  
+VS Code  
+Figma  
+Postman
+
+</td>
+
+</tr>
+</table>
+
+<br>
+
+`REACT` &nbsp; `JAVASCRIPT` &nbsp; `PYTHON` &nbsp; `NODE.JS` &nbsp; `GIT` &nbsp; `AI`
+
+</div>
