@@ -1,0 +1,284 @@
+name: Update Featured Projects
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get pinned repositories
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          username = os.environ["GITHUB_REPOSITORY_OWNER"]
+          token = os.environ["GH_TOKEN"]
+
+          query = """
+          query($login: String!) {
+            user(login: $login) {
+              pinnedItems(first: 6, types: REPOSITORY) {
+                nodes {
+                  ... on Repository {
+                    name
+                    description
+                    url
+                    stargazerCount
+                    forkCount
+                    primaryLanguage {
+                      name
+                    }
+                  }
+                }
+              }
+            }
+          }
+          """
+
+          payload = json.dumps({
+              "query": query,
+              "variables": {"login": username}
+          }).encode()
+
+          request = urllib.request.Request(
+              "https://api.github.com/graphql",
+              data=payload,
+              headers={
+                  "Authorization": f"Bearer {token}",
+                  "Content-Type": "application/json"
+              }
+          )
+
+          with urllib.request.urlopen(request) as response:
+              data = json.load(response)
+
+          repos = data["data"]["user"]["pinnedItems"]["nodes"]
+
+          os.makedirs("profile", exist_ok=True)
+
+          with open("profile/pinned-projects.json", "w") as file:
+              json.dump(repos, file, indent=2)
+
+          print(f"Found {len(repos)} pinned repositories")
+          PY
+
+      - name: Generate Featured Projects SVG
+        run: |
+          python - <<'PY'
+          import json
+          import html
+
+          with open("profile/pinned-projects.json") as file:
+              repos = json.load(file)
+
+          width = 1200
+          card_width = 520
+          card_height = 180
+          gap_x = 40
+          gap_y = 35
+          left = 60
+          top = 140
+
+          rows = max(1, (len(repos) + 1) // 2)
+          height = top + rows * card_height + (rows - 1) * gap_y + 70
+
+          svg = f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+
+          <defs>
+
+            <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#07000f"/>
+              <stop offset="50%" stop-color="#120a2b"/>
+              <stop offset="100%" stop-color="#03030a"/>
+            </linearGradient>
+
+            <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#24153f"/>
+              <stop offset="100%" stop-color="#0d0b19"/>
+            </linearGradient>
+
+            <linearGradient id="text" x1="0" x2="1">
+              <stop offset="0%" stop-color="#c084fc"/>
+              <stop offset="100%" stop-color="#818cf8"/>
+            </linearGradient>
+
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="18"/>
+            </filter>
+
+          </defs>
+
+          <rect width="{width}" height="{height}" rx="32" fill="url(#bg)"/>
+
+          <circle cx="120" cy="80" r="150"
+                  fill="#8b5cf6"
+                  opacity=".15"
+                  filter="url(#glow)">
+            <animate attributeName="cx"
+                     values="120;220;120"
+                     dur="7s"
+                     repeatCount="indefinite"/>
+          </circle>
+
+          <circle cx="1080" cy="{height - 80}" r="170"
+                  fill="#6366f1"
+                  opacity=".12"
+                  filter="url(#glow)">
+            <animate attributeName="cy"
+                     values="{height - 80};{height - 150};{height - 80}"
+                     dur="8s"
+                     repeatCount="indefinite"/>
+          </circle>
+
+          <text x="600" y="62"
+                text-anchor="middle"
+                font-family="Arial, Helvetica, sans-serif"
+                font-size="38"
+                font-weight="700"
+                fill="#ffffff">
+            FEATURED WORK
+          </text>
+
+          <text x="600" y="95"
+                text-anchor="middle"
+                font-family="Arial, Helvetica, sans-serif"
+                font-size="15"
+                fill="#b8a8d9">
+            My pinned repositories
+          </text>
+          '''
+
+          for i, repo in enumerate(repos):
+
+              col = i % 2
+              row = i // 2
+
+              x = left + col * (card_width + gap_x)
+              y = top + row * (card_height + gap_y)
+
+              name = html.escape(repo.get("name") or "Repository")
+              description = html.escape(
+                  repo.get("description") or "A project built with curiosity and code."
+              )
+
+              if len(description) > 55:
+                  description = description[:52] + "..."
+
+              language = repo.get("primaryLanguage")
+              language_name = html.escape(language["name"]) if language else "Project"
+
+              stars = repo.get("stargazerCount", 0)
+              forks = repo.get("forkCount", 0)
+
+              svg += f'''
+
+              <g>
+
+                <rect x="{x}"
+                      y="{y}"
+                      width="{card_width}"
+                      height="{card_height}"
+                      rx="24"
+                      fill="url(#card)"
+                      stroke="#a855f7"
+                      stroke-opacity=".45"/>
+
+                <rect x="{x}"
+                      y="{y}"
+                      width="{card_width}"
+                      height="{card_height}"
+                      rx="24"
+                      fill="none"
+                      stroke="#c084fc"
+                      stroke-opacity=".10"
+                      stroke-width="6"/>
+
+                <circle cx="{x + 48}"
+                        cy="{y + 50}"
+                        r="27"
+                        fill="#a855f7"
+                        opacity=".18"/>
+
+                <text x="{x + 48}"
+                      y="{y + 59}"
+                      text-anchor="middle"
+                      font-size="22"
+                      fill="#ffffff">
+                    ◈
+                </text>
+
+                <text x="{x + 90}"
+                      y="{y + 48}"
+                      font-family="Arial, Helvetica, sans-serif"
+                      font-size="22"
+                      font-weight="700"
+                      fill="#ffffff">
+                    {name}
+                </text>
+
+                <text x="{x + 90}"
+                      y="{y + 78}"
+                      font-family="Arial, Helvetica, sans-serif"
+                      font-size="13"
+                      fill="#aaa0c5">
+                    {description}
+                </text>
+
+                <text x="{x + 90}"
+                      y="{y + 112}"
+                      font-family="monospace"
+                      font-size="12"
+                      fill="#c084fc">
+                    {language_name}
+                </text>
+
+                <text x="{x + 90}"
+                      y="{y + 145}"
+                      font-family="monospace"
+                      font-size="12"
+                      fill="#818cf8">
+                    ★ {stars}     ⑂ {forks}
+                </text>
+
+              </g>
+              '''
+
+          svg += f'''
+
+          <rect x="2"
+                y="2"
+                width="{width - 4}"
+                height="{height - 4}"
+                rx="32"
+                fill="none"
+                stroke="#8b5cf6"
+                stroke-opacity=".30"/>
+
+          </svg>
+          '''
+
+          with open("profile/featured-projects.svg", "w") as file:
+              file.write(svg)
+
+          print("Featured projects SVG generated.")
+          PY
+
+      - name: Commit generated files
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "Update featured projects"
+          add: "profile/pinned-projects.json profile/featured-projects.svg"
