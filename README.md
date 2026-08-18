@@ -38,4 +38,24 @@ Building modern digital experiences with React, JavaScript & AI.
 
 </div>
 
+<br><br>
+
+<div align="center">
+
+# 📊 GITHUB ANALYTICS
+
+### My coding activity, visualized.
+
+<br>
+
+<img src="./profile/stats.svg"
+     width="49%"
+     alt="GitHub Stats">
+
+<img src="./profile/top-langs.svg"
+     width="49%"
+     alt="Top Languages">
+
+</div>
+
 
