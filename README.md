@@ -150,12 +150,9 @@ in public.
 
 ### ⚛️ FRONTEND
 
-HTML  
-CSS  
-JavaScript  
-React  
-Vite  
-Tailwind CSS
+<img src="https://skillicons.dev/icons?i=html,css,js,react,vite,tailwind"
+     width="180"
+     alt="Frontend Technologies">
 
 </td>
 
@@ -163,11 +160,13 @@ Tailwind CSS
 
 ### 🧠 AI / ML
 
-Python  
-OpenCV  
-MediaPipe  
-AI  
-Computer Vision
+<img src="https://skillicons.dev/icons?i=python,opencv"
+     width="130"
+     alt="AI ML Technologies">
+
+<br><br>
+
+`MediaPipe` `AI`
 
 </td>
 
@@ -175,11 +174,13 @@ Computer Vision
 
 ### ⚙️ BACKEND
 
-Node.js  
-Express.js  
-MySQL  
-REST APIs  
-Multer
+<img src="https://skillicons.dev/icons?i=nodejs,express,mysql"
+     width="145"
+     alt="Backend Technologies">
+
+<br><br>
+
+`REST API` `Multer`
 
 </td>
 
@@ -187,20 +188,27 @@ Multer
 
 ### 🛠️ TOOLS
 
-Git  
-GitHub  
-VS Code  
-Figma  
-Postman
+<img src="https://skillicons.dev/icons?i=git,github,vscode,figma,postman"
+     width="170"
+     alt="Development Tools">
 
 </td>
 
 </tr>
 </table>
 
-<br>
+<br><br>
 
-`REACT` &nbsp; `JAVASCRIPT` &nbsp; `PYTHON` &nbsp; `NODE.JS` &nbsp; `GIT` &nbsp; `AI`
+<img src="https://skillicons.dev/icons?i=html,css,js,react,vite,tailwind,python,nodejs,express,mysql,git,github,vscode,figma,postman"
+     width="90%"
+     alt="Shreya's Technology Stack">
+
+<br><br>
+
+`BUILD` &nbsp;•&nbsp;
+`CREATE` &nbsp;•&nbsp;
+`LEARN` &nbsp;•&nbsp;
+`REPEAT`
 
 </div>
 
