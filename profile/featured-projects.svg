@@ -1,723 +1,447 @@
-name: Update Featured Projects
-
-on:
-  schedule:
-    - cron: "0 */6 * * *"
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  generate:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Get pinned repositories
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          python - <<'PY'
-          import json
-          import os
-          import urllib.request
-
-          username = os.environ["GITHUB_REPOSITORY_OWNER"]
-          token = os.environ["GH_TOKEN"]
-
-          query = """
-          query($login: String!) {
-            user(login: $login) {
-              pinnedItems(first: 6, types: REPOSITORY) {
-                nodes {
-                  ... on Repository {
-                    name
-                    description
-                    url
-                    stargazerCount
-                    forkCount
-                    primaryLanguage {
-                      name
-                    }
-                  }
-                }
-              }
-            }
-          }
-          """
-
-          payload = json.dumps({
-              "query": query,
-              "variables": {
-                  "login": username
-              }
-          }).encode()
-
-          request = urllib.request.Request(
-              "https://api.github.com/graphql",
-              data=payload,
-              headers={
-                  "Authorization": f"Bearer {token}",
-                  "Content-Type": "application/json",
-                  "User-Agent": "github-actions"
-              }
-          )
 
-          with urllib.request.urlopen(request) as response:
-              data = json.load(response)
-
-          if "errors" in data:
-              print(json.dumps(data["errors"], indent=2))
-              raise SystemExit(1)
-
-          user = data.get("data", {}).get("user")
-
-          if not user:
-              raise SystemExit("GitHub user not found.")
-
-          repos = user.get("pinnedItems", {}).get("nodes", [])
-
-          print(f"Found {len(repos)} pinned repositories.")
-
-          for repo in repos:
-              print("Pinned:", repo.get("name"))
-
-          os.makedirs("profile", exist_ok=True)
-
-          with open("profile/pinned-projects.json", "w") as file:
-              json.dump(repos, file, indent=2)
-
-          PY
-
-      - name: Generate Futuristic Featured Projects
-        run: |
-          python - <<'PY'
-          import json
-          import html
-
-          with open("profile/pinned-projects.json") as file:
-              repos = json.load(file)
-
-          width = 1200
-          card_width = 520
-          card_height = 185
-          gap_x = 40
-          gap_y = 35
-          left = 60
-          top = 155
-
-          count = len(repos)
-
-          rows = max(1, (count + 1) // 2)
-
-          height = top + (rows * card_height) + ((rows - 1) * gap_y) + 75
-
-          svg = f'''<svg width="{width}"
-          height="{height}"
-          viewBox="0 0 {width} {height}"
-          xmlns="http://www.w3.org/2000/svg">
-
-          <defs>
-
-            <!-- MAIN BACKGROUND -->
-
-            <linearGradient id="background"
-              x1="0"
-              y1="0"
-              x2="1"
-              y2="1">
-
-              <stop offset="0%"
-                stop-color="#05000d"/>
-
-              <stop offset="45%"
-                stop-color="#12082a"/>
-
-              <stop offset="75%"
-                stop-color="#09051a"/>
-
-              <stop offset="100%"
-                stop-color="#020208"/>
-
-            </linearGradient>
-
-
-            <!-- CARD -->
-
-            <linearGradient id="glass"
-              x1="0"
-              y1="0"
-              x2="1"
-              y2="1">
-
-              <stop offset="0%"
-                stop-color="#24163f"
-                stop-opacity=".88"/>
-
-              <stop offset="100%"
-                stop-color="#090815"
-                stop-opacity=".94"/>
-
-            </linearGradient>
-
-
-            <!-- PURPLE TEXT -->
-
-            <linearGradient id="purpleText"
-              x1="0"
-              x2="1">
-
-              <stop offset="0%"
-                stop-color="#c084fc"/>
-
-              <stop offset="50%"
-                stop-color="#ffffff"/>
-
-              <stop offset="100%"
-                stop-color="#818cf8"/>
-
-            </linearGradient>
-
-
-            <!-- GLOW -->
-
-            <radialGradient id="purpleGlow">
-
-              <stop offset="0%"
-                stop-color="#a855f7"
-                stop-opacity=".75"/>
-
-              <stop offset="45%"
-                stop-color="#7c3aed"
-                stop-opacity=".28"/>
-
-              <stop offset="100%"
-                stop-color="#000000"
-                stop-opacity="0"/>
-
-            </radialGradient>
-
-
-            <!-- BLUR -->
-
-            <filter id="blur">
-
-              <feGaussianBlur
-                stdDeviation="28"/>
-
-            </filter>
-
-
-            <!-- SMALL BLUR -->
-
-            <filter id="softBlur">
-
-              <feGaussianBlur
-                stdDeviation="8"/>
-
-            </filter>
-
-
-            <!-- GRID -->
-
-            <pattern id="grid"
-              width="45"
-              height="45"
-              patternUnits="userSpaceOnUse">
-
-              <path
-                d="M 45 0 L 0 0 0 45"
-                fill="none"
-                stroke="#8b5cf6"
-                stroke-opacity=".08"
-                stroke-width="1"/>
-
-            </pattern>
-
-          </defs>
-
-
-          <!-- BACKGROUND -->
-
-          <rect
-            width="{width}"
-            height="{height}"
-            rx="32"
-            fill="url(#background)"/>
-
-
-          <!-- ANIMATED GRID -->
-
-          <rect
-            width="{width}"
-            height="{height}"
-            fill="url(#grid)">
-
-            <animate
-              attributeName="x"
-              values="0;45;0"
-              dur="12s"
-              repeatCount="indefinite"/>
-
-            <animate
-              attributeName="y"
-              values="0;45;0"
-              dur="16s"
-              repeatCount="indefinite"/>
-
-          </rect>
-
-
-          <!-- LARGE AMBIENT GLOW -->
-
-          <circle
-            cx="120"
-            cy="120"
-            r="220"
-            fill="url(#purpleGlow)"
-            filter="url(#blur)">
-
-            <animate
-              attributeName="cx"
-              values="120;300;120"
-              dur="9s"
-              repeatCount="indefinite"/>
-
-            <animate
-              attributeName="cy"
-              values="120;210;120"
-              dur="11s"
-              repeatCount="indefinite"/>
-
-          </circle>
-
-
-          <!-- SECOND GLOW -->
-
-          <circle
-            cx="1080"
-            cy="{height - 100}"
-            r="240"
-            fill="url(#purpleGlow)"
-            filter="url(#blur)">
-
-            <animate
-              attributeName="cx"
-              values="1080;920;1080"
-              dur="10s"
-              repeatCount="indefinite"/>
-
-            <animate
-              attributeName="cy"
-              values="{height - 100};{height - 190};{height - 100}"
-              dur="8s"
-              repeatCount="indefinite"/>
-
-          </circle>
-
-
-          <!-- FLOATING PARTICLES -->
-
-          <g fill="#c084fc">
-
-            <circle cx="180" cy="100" r="2">
-              <animate
-                attributeName="cy"
-                values="100;70;100"
-                dur="4s"
-                repeatCount="indefinite"/>
-            </circle>
-
-            <circle cx="370" cy="90" r="1.5">
-              <animate
-                attributeName="cy"
-                values="90;120;90"
-                dur="5s"
-                repeatCount="indefinite"/>
-            </circle>
-
-            <circle cx="820" cy="110" r="2">
-              <animate
-                attributeName="cy"
-                values="110;75;110"
-                dur="6s"
-                repeatCount="indefinite"/>
-            </circle>
-
-            <circle cx="1030" cy="180" r="1.5">
-              <animate
-                attributeName="cy"
-                values="180;140;180"
-                dur="5s"
-                repeatCount="indefinite"/>
-            </circle>
-
-            <circle cx="280" cy="{height - 100}" r="2">
-              <animate
-                attributeName="cy"
-                values="{height - 100};{height - 130};{height - 100}"
-                dur="5s"
-                repeatCount="indefinite"/>
-            </circle>
-
-            <circle cx="900" cy="{height - 80}" r="1.5">
-              <animate
-                attributeName="cy"
-                values="{height - 80};{height - 120};{height - 80}"
-                dur="4s"
-                repeatCount="indefinite"/>
-            </circle>
-
-          </g>
-
-
-          <!-- HEADER -->
-
-          <text
-            x="600"
-            y="62"
-            text-anchor="middle"
-            font-family="Arial, Helvetica, sans-serif"
-            font-size="38"
-            font-weight="700"
-            fill="url(#purpleText)">
-
-            FEATURED WORK
-
-          </text>
-
-
-          <text
-            x="600"
-            y="95"
-            text-anchor="middle"
-            font-family="Arial, Helvetica, sans-serif"
-            font-size="15"
-            fill="#b8a8d9">
-
-            Selected from my pinned repositories
-
-          </text>
-
-
-          <!-- DECORATIVE LINE -->
-
-          <line
-            x1="500"
-            y1="115"
-            x2="700"
-            y2="115"
+<svg width="1200" height="820"
+viewBox="0 0 1200 820"
+xmlns="http://www.w3.org/2000/svg">
+
+<defs>
+
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#07000f"/>
+    <stop offset="50%" stop-color="#120a2b"/>
+    <stop offset="100%" stop-color="#03030a"/>
+  </linearGradient>
+
+  <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#24153f"/>
+    <stop offset="100%" stop-color="#0d0b19"/>
+  </linearGradient>
+
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="18"/>
+  </filter>
+
+</defs>
+
+<rect width="1200"
+      height="820"
+      rx="32"
+      fill="url(#bg)"/>
+
+<circle cx="120"
+        cy="80"
+        r="150"
+        fill="#8b5cf6"
+        opacity=".15"
+        filter="url(#glow)">
+
+  <animate attributeName="cx"
+           values="120;220;120"
+           dur="7s"
+           repeatCount="indefinite"/>
+
+</circle>
+
+<circle cx="1080"
+        cy="740"
+        r="170"
+        fill="#6366f1"
+        opacity=".12"
+        filter="url(#glow)">
+
+  <animate attributeName="cy"
+           values="740;670;740"
+           dur="8s"
+           repeatCount="indefinite"/>
+
+</circle>
+
+<text x="600"
+      y="62"
+      text-anchor="middle"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="38"
+      font-weight="700"
+      fill="#ffffff">
+  FEATURED WORK
+</text>
+
+<text x="600"
+      y="95"
+      text-anchor="middle"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="15"
+      fill="#b8a8d9">
+  My pinned repositories
+</text>
+
+
+    <g>
+
+      <rect x="60"
+            y="140"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
             stroke="#a855f7"
-            stroke-opacity=".45">
-
-            <animate
-              attributeName="x1"
-              values="500;470;500"
-              dur="4s"
-              repeatCount="indefinite"/>
-
-            <animate
-              attributeName="x2"
-              values="700;730;700"
-              dur="4s"
-              repeatCount="indefinite"/>
-
-          </line>
-          '''
-
-          if count == 0:
-
-              svg += f'''
-
-              <text
-                x="600"
-                y="250"
-                text-anchor="middle"
-                font-family="Arial, Helvetica, sans-serif"
-                font-size="18"
-                fill="#b8a8d9">
-
-                No pinned repositories found.
-
-              </text>
-
-              '''
-
-          for i, repo in enumerate(repos):
-
-              col = i % 2
-              row = i // 2
-
-              x = left + col * (card_width + gap_x)
-              y = top + row * (card_height + gap_y)
-
-              name = html.escape(
-                  repo.get("name") or "Repository"
-              )
-
-              description = html.escape(
-                  repo.get("description")
-                  or "A project built with curiosity and code."
-              )
-
-              if len(description) > 62:
-                  description = description[:59] + "..."
-
-              language = repo.get("primaryLanguage")
-
-              if language:
-
-                  language_name = html.escape(
-                      language.get("name") or "Project"
-                  )
-
-              else:
-
-                  language_name = "Project"
-
-              stars = repo.get(
-                  "stargazerCount",
-                  0
-              )
-
-              forks = repo.get(
-                  "forkCount",
-                  0
-              )
-
-
-              # CARD
-
-              svg += f'''
-
-              <g>
-
-
-                <!-- CARD SHADOW / GLOW -->
-
-                <rect
-                  x="{x}"
-                  y="{y + 4}"
-                  width="{card_width}"
-                  height="{card_height}"
-                  rx="26"
-                  fill="#7c3aed"
-                  opacity=".12"
-                  filter="url(#softBlur)"/>
-
-
-                <!-- GLASS CARD -->
-
-                <rect
-                  x="{x}"
-                  y="{y}"
-                  width="{card_width}"
-                  height="{card_height}"
-                  rx="24"
-                  fill="url(#glass)"
-                  stroke="#a855f7"
-                  stroke-opacity=".48"/>
-
-
-                <!-- INNER BORDER -->
-
-                <rect
-                  x="{x + 5}"
-                  y="{y + 5}"
-                  width="{card_width - 10}"
-                  height="{card_height - 10}"
-                  rx="20"
-                  fill="none"
-                  stroke="#ffffff"
-                  stroke-opacity=".045"/>
-
-
-                <!-- TOP LIGHT -->
-
-                <line
-                  x1="{x + 25}"
-                  y1="{y + 1}"
-                  x2="{x + card_width - 25}"
-                  y2="{y + 1}"
-                  stroke="#c084fc"
-                  stroke-opacity=".28"/>
-
-
-                <!-- PROJECT ICON -->
-
-                <circle
-                  cx="{x + 52}"
-                  cy="{y + 52}"
-                  r="28"
-                  fill="#8b5cf6"
-                  opacity=".15"/>
-
-
-                <circle
-                  cx="{x + 52}"
-                  cy="{y + 52}"
-                  r="21"
-                  fill="none"
-                  stroke="#c084fc"
-                  stroke-opacity=".32">
-
-
-                  <animate
-                    attributeName="r"
-                    values="20;24;20"
-                    dur="3s"
-                    repeatCount="indefinite"/>
-
-                </circle>
-
-
-                <text
-                  x="{x + 52}"
-                  y="{y + 60}"
-                  text-anchor="middle"
-                  font-family="Arial"
-                  font-size="20"
-                  font-weight="700"
-                  fill="#ffffff">
-
-                  ◈
-
-                </text>
-
-
-                <!-- PROJECT NAME -->
-
-                <text
-                  x="{x + 95}"
-                  y="{y + 48}"
-                  font-family="Arial, Helvetica, sans-serif"
-                  font-size="21"
-                  font-weight="700"
-                  fill="#ffffff">
-
-                  {name}
-
-                </text>
-
-
-                <!-- DESCRIPTION -->
-
-                <text
-                  x="{x + 95}"
-                  y="{y + 77}"
-                  font-family="Arial, Helvetica, sans-serif"
-                  font-size="13"
-                  fill="#aaa0c5">
-
-                  {description}
-
-                </text>
-
-
-                <!-- LANGUAGE PILL -->
-
-                <rect
-                  x="{x + 95}"
-                  y="{y + 94}"
-                  width="105"
-                  height="25"
-                  rx="12"
-                  fill="#8b5cf6"
-                  fill-opacity=".12"
-                  stroke="#a855f7"
-                  stroke-opacity=".25"/>
-
-
-                <text
-                  x="{x + 147}"
-                  y="{y + 111}"
-                  text-anchor="middle"
-                  font-family="monospace"
-                  font-size="11"
-                  fill="#c084fc">
-
-                  {language_name}
-
-                </text>
-
-
-                <!-- STATS -->
-
-                <text
-                  x="{x + 95}"
-                  y="{y + 151}"
-                  font-family="monospace"
-                  font-size="12"
-                  fill="#818cf8">
-
-                  ★ {stars}
-
-                </text>
-
-
-                <text
-                  x="{x + 155}"
-                  y="{y + 151}"
-                  font-family="monospace"
-                  font-size="12"
-                  fill="#818cf8">
-
-                  ⑂ {forks}
-
-                </text>
-
-
-                <text
-                  x="{x + card_width - 35}"
-                  y="{y + 151}"
-                  text-anchor="end"
-                  font-family="monospace"
-                  font-size="10"
-                  fill="#6d5a91">
-
-                  PINNED
-
-                </text>
-
-
-              </g>
-
-              '''
-
-          # OUTER BORDER
-
-          svg += f'''
-
-          <rect
-            x="2"
-            y="2"
-            width="{width - 4}"
-            height="{height - 4}"
-            rx="32"
+            stroke-opacity=".45"/>
+
+      <rect x="60"
+            y="140"
+            width="520"
+            height="180"
+            rx="24"
             fill="none"
-            stroke="#8b5cf6"
-            stroke-opacity=".30"/>
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
 
+      <circle cx="108"
+              cy="190"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
 
-          </svg>
-          '''
+      <text x="108"
+            y="199"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
 
-          with open(
-              "profile/featured-projects.svg",
-              "w"
-          ) as file:
+      <text x="150"
+            y="188"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        ToDo_List
+      </text>
 
-              file.write(svg)
+      <text x="150"
+            y="218"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        A project built with curiosity and code.
+      </text>
 
-          print("Futuristic Featured Projects SVG generated.")
+      <text x="150"
+            y="252"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        JavaScript
+      </text>
 
-          PY
+      <text x="150"
+            y="285"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 0     ⑂ 0
+      </text>
 
-      - name: Commit generated files
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: "Redesign featured projects"
-          add: "profile/pinned-projects.json profile/featured-projects.svg"
+    </g>
+
+    
+
+    <g>
+
+      <rect x="620"
+            y="140"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="620"
+            y="140"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="668"
+              cy="190"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="668"
+            y="199"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="710"
+            y="188"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        view-analytics
+      </text>
+
+      <text x="710"
+            y="218"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        ## About This Project  MyTube Studio is a frontend-focu...
+      </text>
+
+      <text x="710"
+            y="252"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        HTML
+      </text>
+
+      <text x="710"
+            y="285"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 1     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
+    <g>
+
+      <rect x="60"
+            y="355"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="60"
+            y="355"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="108"
+              cy="405"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="108"
+            y="414"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="150"
+            y="403"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        Expense_Tracker
+      </text>
+
+      <text x="150"
+            y="433"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        A project built with curiosity and code.
+      </text>
+
+      <text x="150"
+            y="467"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        JavaScript
+      </text>
+
+      <text x="150"
+            y="500"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 0     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
+    <g>
+
+      <rect x="620"
+            y="355"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="620"
+            y="355"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="668"
+              cy="405"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="668"
+            y="414"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="710"
+            y="403"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        Movie_Expoler
+      </text>
+
+      <text x="710"
+            y="433"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        A project built with curiosity and code.
+      </text>
+
+      <text x="710"
+            y="467"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        JavaScript
+      </text>
+
+      <text x="710"
+            y="500"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 0     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
+    <g>
+
+      <rect x="60"
+            y="570"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="60"
+            y="570"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="108"
+              cy="620"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="108"
+            y="629"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="150"
+            y="618"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        gbu-grievance-system
+      </text>
+
+      <text x="150"
+            y="648"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        GBU Grievance Management System
+      </text>
+
+      <text x="150"
+            y="682"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        JavaScript
+      </text>
+
+      <text x="150"
+            y="715"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 0     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
+<rect x="2"
+      y="2"
+      width="1196"
+      height="816"
+      rx="32"
+      fill="none"
+      stroke="#8b5cf6"
+      stroke-opacity=".30"/>
+
+</svg>
