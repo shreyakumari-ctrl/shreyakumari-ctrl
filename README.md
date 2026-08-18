@@ -78,4 +78,57 @@ Building modern digital experiences with React, JavaScript & AI.
 
 </div>
 
+<br><br>
+
+<div align="center">
+
+# ⚡ CURRENTLY BUILDING
+
+### Turning ideas into real products.
+
+<br>
+
+<table>
+<tr>
+
+<td align="center" width="33%">
+
+### 🤖 AI
+
+Building intelligent interfaces  
+and experimenting with  
+computer vision.
+
+</td>
+
+<td align="center" width="33%">
+
+### ⚛️ FRONTEND
+
+Creating modern  
+React experiences with  
+clean UI/UX.
+
+</td>
+
+<td align="center" width="33%">
+
+### 🚀 OPEN SOURCE
+
+Learning, contributing  
+and building projects  
+in public.
+
+</td>
+
+</tr>
+</table>
+
+<br>
+
+### 🟣 STATUS
+
+`● ONLINE` &nbsp;&nbsp; `BUILDING` &nbsp;&nbsp; `LEARNING`
+
+</div>
 
