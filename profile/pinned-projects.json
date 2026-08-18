@@ -1,1 +1,52 @@
-[]
+[
+  {
+    "name": "ToDo_List",
+    "description": null,
+    "url": "https://github.com/shreyakumari-ctrl/ToDo_List",
+    "stargazerCount": 0,
+    "forkCount": 0,
+    "primaryLanguage": {
+      "name": "JavaScript"
+    }
+  },
+  {
+    "name": "view-analytics",
+    "description": "## About This Project  MyTube Studio is a frontend-focused analytics platform built to demonstrate modern web development  practices. It showcases:  - Clean, semantic HTML5 structure - Responsive CSS3 design - Interactive JavaScript functionality - Real-time data visualization with Chart.js - Client-side data persistence with Local Storage  ### Pro",
+    "url": "https://github.com/shreyakumari-ctrl/view-analytics",
+    "stargazerCount": 1,
+    "forkCount": 0,
+    "primaryLanguage": {
+      "name": "HTML"
+    }
+  },
+  {
+    "name": "Expense_Tracker",
+    "description": null,
+    "url": "https://github.com/shreyakumari-ctrl/Expense_Tracker",
+    "stargazerCount": 0,
+    "forkCount": 0,
+    "primaryLanguage": {
+      "name": "JavaScript"
+    }
+  },
+  {
+    "name": "Movie_Expoler",
+    "description": null,
+    "url": "https://github.com/shreyakumari-ctrl/Movie_Expoler",
+    "stargazerCount": 0,
+    "forkCount": 0,
+    "primaryLanguage": {
+      "name": "JavaScript"
+    }
+  },
+  {
+    "name": "gbu-grievance-system",
+    "description": "GBU Grievance Management System",
+    "url": "https://github.com/shreyakumari-ctrl/gbu-grievance-system",
+    "stargazerCount": 0,
+    "forkCount": 0,
+    "primaryLanguage": {
+      "name": "JavaScript"
+    }
+  }
+]

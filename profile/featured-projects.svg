@@ -1,4 +1,6 @@
-<svg width="1200" height="390" viewBox="0 0 1200 390" xmlns="http://www.w3.org/2000/svg">
+<svg width="1200" height="820"
+viewBox="0 0 1200 820"
+xmlns="http://www.w3.org/2000/svg">
 
 <defs>
 
@@ -13,40 +15,47 @@
     <stop offset="100%" stop-color="#0d0b19"/>
   </linearGradient>
 
-  <linearGradient id="text" x1="0" x2="1">
-    <stop offset="0%" stop-color="#c084fc"/>
-    <stop offset="100%" stop-color="#818cf8"/>
-  </linearGradient>
-
   <filter id="glow">
     <feGaussianBlur stdDeviation="18"/>
   </filter>
 
 </defs>
 
-<rect width="1200" height="390" rx="32" fill="url(#bg)"/>
+<rect width="1200"
+      height="820"
+      rx="32"
+      fill="url(#bg)"/>
 
-<circle cx="120" cy="80" r="150"
+<circle cx="120"
+        cy="80"
+        r="150"
         fill="#8b5cf6"
         opacity=".15"
         filter="url(#glow)">
+
   <animate attributeName="cx"
            values="120;220;120"
            dur="7s"
            repeatCount="indefinite"/>
+
 </circle>
 
-<circle cx="1080" cy="310" r="170"
+<circle cx="1080"
+        cy="740"
+        r="170"
         fill="#6366f1"
         opacity=".12"
         filter="url(#glow)">
+
   <animate attributeName="cy"
-           values="310;240;310"
+           values="740;670;740"
            dur="8s"
            repeatCount="indefinite"/>
+
 </circle>
 
-<text x="600" y="62"
+<text x="600"
+      y="62"
       text-anchor="middle"
       font-family="Arial, Helvetica, sans-serif"
       font-size="38"
@@ -55,7 +64,8 @@
   FEATURED WORK
 </text>
 
-<text x="600" y="95"
+<text x="600"
+      y="95"
       text-anchor="middle"
       font-family="Arial, Helvetica, sans-serif"
       font-size="15"
@@ -64,10 +74,370 @@
 </text>
 
 
+    <g>
+
+      <rect x="60"
+            y="140"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="60"
+            y="140"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="108"
+              cy="190"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="108"
+            y="199"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="150"
+            y="188"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        ToDo_List
+      </text>
+
+      <text x="150"
+            y="218"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        A project built with curiosity and code.
+      </text>
+
+      <text x="150"
+            y="252"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        JavaScript
+      </text>
+
+      <text x="150"
+            y="285"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 0     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
+    <g>
+
+      <rect x="620"
+            y="140"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="620"
+            y="140"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="668"
+              cy="190"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="668"
+            y="199"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="710"
+            y="188"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        view-analytics
+      </text>
+
+      <text x="710"
+            y="218"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        ## About This Project  MyTube Studio is a frontend-focu...
+      </text>
+
+      <text x="710"
+            y="252"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        HTML
+      </text>
+
+      <text x="710"
+            y="285"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 1     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
+    <g>
+
+      <rect x="60"
+            y="355"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="60"
+            y="355"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="108"
+              cy="405"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="108"
+            y="414"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="150"
+            y="403"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        Expense_Tracker
+      </text>
+
+      <text x="150"
+            y="433"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        A project built with curiosity and code.
+      </text>
+
+      <text x="150"
+            y="467"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        JavaScript
+      </text>
+
+      <text x="150"
+            y="500"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 0     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
+    <g>
+
+      <rect x="620"
+            y="355"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="620"
+            y="355"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="668"
+              cy="405"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="668"
+            y="414"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="710"
+            y="403"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        Movie_Expoler
+      </text>
+
+      <text x="710"
+            y="433"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        A project built with curiosity and code.
+      </text>
+
+      <text x="710"
+            y="467"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        JavaScript
+      </text>
+
+      <text x="710"
+            y="500"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 0     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
+    <g>
+
+      <rect x="60"
+            y="570"
+            width="520"
+            height="180"
+            rx="24"
+            fill="url(#card)"
+            stroke="#a855f7"
+            stroke-opacity=".45"/>
+
+      <rect x="60"
+            y="570"
+            width="520"
+            height="180"
+            rx="24"
+            fill="none"
+            stroke="#c084fc"
+            stroke-opacity=".12"
+            stroke-width="6"/>
+
+      <circle cx="108"
+              cy="620"
+              r="27"
+              fill="#a855f7"
+              opacity=".18"/>
+
+      <text x="108"
+            y="629"
+            text-anchor="middle"
+            font-size="22"
+            fill="#ffffff">
+        ◈
+      </text>
+
+      <text x="150"
+            y="618"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="22"
+            font-weight="700"
+            fill="#ffffff">
+        gbu-grievance-system
+      </text>
+
+      <text x="150"
+            y="648"
+            font-family="Arial, Helvetica, sans-serif"
+            font-size="13"
+            fill="#aaa0c5">
+        GBU Grievance Management System
+      </text>
+
+      <text x="150"
+            y="682"
+            font-family="monospace"
+            font-size="12"
+            fill="#c084fc">
+        JavaScript
+      </text>
+
+      <text x="150"
+            y="715"
+            font-family="monospace"
+            font-size="12"
+            fill="#818cf8">
+        ★ 0     ⑂ 0
+      </text>
+
+    </g>
+
+    
+
 <rect x="2"
       y="2"
       width="1196"
-      height="386"
+      height="816"
       rx="32"
       fill="none"
       stroke="#8b5cf6"
