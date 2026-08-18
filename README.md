@@ -202,3 +202,33 @@ Postman
 `REACT` &nbsp; `JAVASCRIPT` &nbsp; `PYTHON` &nbsp; `NODE.JS` &nbsp; `GIT` &nbsp; `AI`
 
 </div>
+
+<br><br>
+
+<div align="center">
+
+# 🌐 LET'S CONNECT
+
+### Have an idea? Let's build something amazing together.
+
+<br>
+
+<a href="https://github.com/shreyakumari-ctrl">
+  <img src="https://img.shields.io/badge/GITHUB-0d0a18?style=for-the-badge&logo=github&logoColor=ffffff">
+</a>
+
+&nbsp;
+
+<a href="https://www.linkedin.com/">
+  <img src="https://img.shields.io/badge/LINKEDIN-0d0a18?style=for-the-badge&logo=linkedin&logoColor=8b5cf6">
+</a>
+
+<br><br>
+
+`BUILD • CREATE • LEARN • REPEAT`
+
+<br>
+
+### ✦ Thanks for visiting my corner of the internet ✦
+
+</div>
