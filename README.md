@@ -58,4 +58,24 @@ Building modern digital experiences with React, JavaScript & AI.
 
 </div>
 
+<br><br>
+
+<div align="center">
+
+# 🐍 CONTRIBUTION FLOW
+
+### Every commit leaves a trace.
+
+<br>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./profile/github-contribution-grid-snake-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="./profile/github-contribution-grid-snake.svg">
+  <img src="./profile/github-contribution-grid-snake.svg"
+       width="100%"
+       alt="GitHub Contribution Snake">
+</picture>
+
+</div>
+
 
